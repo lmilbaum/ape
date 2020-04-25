@@ -2,17 +2,21 @@
 
 import click
 import yaml
+from dockerfile_parse import DockerfileParser
 
 
 @click.command()
-@click.option('--dockerfile', default='./Dockerfile', help='Dockerfile path')
-def main(dockerfile):
+@click.option(
+    '--path', default='.', help='Dockerfile path'
+)
+def main(path):
     bom = {}
-    with open(dockerfile, 'r') as infile:
-        bom['dockerfile'] = infile.read()
+    dfp = DockerfileParser(path=path)
 
+    bom['dockerfile'] = dfp.content
+    bom['parent_image'] = dfp.baseimage
     print(yaml.dump(bom, default_flow_style=False))
 
 
 if __name__ == '__main__':
-    main()
+    main()  # pylint: disable=no-value-for-parameter
